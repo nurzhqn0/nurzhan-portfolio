@@ -1,26 +1,119 @@
 @import "tailwindcss";
+@import "@radix-ui/themes/styles.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbfaf7;
+  --foreground: #181713;
+  --card: #ffffff;
+  --card-foreground: #181713;
+  --popover: #ffffff;
+  --popover-foreground: #181713;
+  --primary: #1d3b34;
+  --primary-foreground: #f8f5ed;
+  --secondary: #ebe7dc;
+  --secondary-foreground: #2f302a;
+  --muted: #efede7;
+  --muted-foreground: #6a675f;
+  --accent: #be6f45;
+  --accent-foreground: #ffffff;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #ded8cc;
+  --input: #ded8cc;
+  --ring: #be6f45;
+  --radius: 0.5rem;
+  --font-geist-sans: Arial, Helvetica, sans-serif;
+  --font-geist-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}
+
+a {
+  text-underline-offset: 4px;
+}
+
+.overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.prose-lite p {
+  margin-bottom: 1rem;
+}
+
+.prose-lite p:last-child {
+  margin-bottom: 0;
+}
+
+.liquid-header {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08)),
+    color-mix(in oklab, var(--primary) 34%, transparent);
+}
+
+.liquid-header::before {
+  content: "";
+  position: absolute;
+  inset: -35% -20%;
+  z-index: -1;
+  background:
+    linear-gradient(110deg, transparent 10%, rgba(255, 255, 255, 0.18) 28%, transparent 48%),
+    linear-gradient(70deg, rgba(190, 111, 69, 0.38), transparent 40%, rgba(255, 255, 255, 0.12));
+  transform: translateX(-22%);
+  animation: liquid-sheen 8s ease-in-out infinite alternate;
+}
+
+@keyframes liquid-sheen {
+  from {
+    transform: translateX(-22%) skewX(-10deg);
+  }
+
+  to {
+    transform: translateX(18%) skewX(-4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-header::before {
+    animation: none;
+  }
 }

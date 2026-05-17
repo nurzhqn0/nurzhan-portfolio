@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nurzhan Portfolio
+
+Full-stack portfolio built with Next.js, Prisma, Postgres, TailwindCSS, shadcn-style components, TanStack Query, and Vercel Blob uploads.
 
 ## Getting Started
 
-First, run the development server:
+For local development with the Next.js dev server, keep Postgres running in Docker and use `.env.local` for the host app:
 
 ```bash
+docker compose up db
+npm run prisma:migrate
+npm run prisma:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+
+The dev server runs on [http://localhost:3000](http://localhost:3000). The default local database URL is:
+
+```env
+DATABASE_URL="postgresql://portfolio:portfolio_password@localhost:5433/nurzhan_portfolio"
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Docker
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+For local Docker testing or a VPS-style deployment, copy the Docker env template and edit secrets:
 
-## Learn More
+```bash
+cp .env.docker.example .env
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start Postgres and the app:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+docker compose up --build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app runs on [http://localhost:3000](http://localhost:3000). On first boot, migrations run automatically. Set `SEED_DATABASE=true` for the first run if you want starter content.
 
-## Deploy on Vercel
+For a VPS, run this stack behind a reverse proxy such as nginx. A starter config is available at `deploy/nginx.conf.example`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Important production settings:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+ADMIN_PASSWORD=change-this-admin-password
+AUTH_SECRET=replace-with-a-long-random-secret
+BLOB_READ_WRITE_TOKEN=optional-vercel-blob-token
+```
+
+`BLOB_READ_WRITE_TOKEN` is only needed for direct image uploads; external image URLs still work without it.
+When `BLOB_READ_WRITE_TOKEN` is empty, admin uploads are saved locally under `public/uploads`.
+In Docker, that folder is backed by the `uploads-data` volume.

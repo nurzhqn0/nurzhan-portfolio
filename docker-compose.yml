@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-portfolio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portfolio_password}
+      POSTGRES_DB: ${POSTGRES_DB:-nurzhan_portfolio}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-portfolio} -d ${POSTGRES_DB:-nurzhan_portfolio}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads-data:/app/public/uploads
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-portfolio}:${POSTGRES_PASSWORD:-portfolio_password}@db:5432/${POSTGRES_DB:-nurzhan_portfolio}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      AUTH_SECRET: ${AUTH_SECRET:-replace-this-with-a-long-random-secret}
+      BLOB_READ_WRITE_TOKEN: ${BLOB_READ_WRITE_TOKEN:-}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      SEED_DATABASE: ${SEED_DATABASE:-false}
+      NEXT_TELEMETRY_DISABLED: "1"
+
+volumes:
+  postgres-data:
+  uploads-data:
